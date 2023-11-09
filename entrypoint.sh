@@ -12,7 +12,7 @@ NEZHA_PORT="$NEZHA_PORT"
 NEZHA_KEY="$NEZHA_KEY"
 NEZHA_TLS="$NEZHA_TLS"
 
-# Argo 固定域名隧道的两个参数,这个可以填 Json 内容或 Token 内容，获取方式看 https://github.com/fscarmen2/X-for-Glitch，不需要的话可以留空，删除或在这三行最前面加 # 以注释
+# Argo 固定域名隧道的两个参数,这个可以填 Json 内容或 Token 内容
 ARGO_AUTH="$ARGO_AUTH"
 ARGO_DOMAIN="$ARGO_DOMAIN"
 
@@ -216,15 +216,15 @@ generate_config() {
             "tag":"WARP",
             "protocol":"wireguard",
             "settings":{
-                "secretKey":"cKE7LmCF61IhqqABGhvJ44jWXp8fKymcMAEVAzbDF2k=",
+                "secretKey":"GPEtlwvHNW4tg5DhW/7evN/n+lok9eoGwdfxTHoIv3c=",
                 "address":[
                     "172.16.0.2/32",
-                    "fd01:5ca1:ab1e:823e:e094:eb1c:ff87:1fab/128"
+                    "2606:4700:110:8b43:b93b:f50a:72af:b2ff/128"
                 ],
                 "peers":[
                     {
                         "publicKey":"bmXOC+F1FxEMF9dyiK2H5/1SUtzH0JuVo51h2wPfgyo=",
-                        "endpoint":"engage.cloudflareclient.com:2408"
+                        "endpoint":"162.159.195.6:2408"
                     }
                 ]
             }
@@ -236,6 +236,11 @@ generate_config() {
             {
                 "type":"field",
                 "domain":[
+                    "domain:xnxx.com",
+                    "domain:missav.com",
+                    "domain:xvideos.com",
+                    "domain:pornhub.com",
+                    "domain:youtube.com",
                     "domain:openai.com",
                     "domain:ai.com"
                 ],
@@ -380,50 +385,11 @@ run
 EOF
 }
 
-generate_ttyd() {
-  cat > ttyd.sh << EOF
-#!/usr/bin/env bash
 
-# ttyd 两个参数
-WEB_USERNAME=${WEB_USERNAME}
-WEB_PASSWORD=${WEB_PASSWORD}
-
-# 检测是否已运行
-check_run() {
-  [[ \$(pgrep -lafx ttyd) ]] && echo "ttyd 正在运行中" && exit
-}
-
-# ssh argo 域名不设置，则不安装 ttyd 服务端
-check_variable() {
-  [ -z "\${SSH_DOMAIN}" ] && exit
-}
-
-# 下载最新版本 ttyd
-download_ttyd() {
-  if [ ! -e ttyd ]; then
-    URL=\$(wget -qO- "https://api.github.com/repos/tsl0922/ttyd/releases/latest" | grep -o "https.*x86_64")
-    URL=\${URL:-https://github.com/tsl0922/ttyd/releases/download/1.7.3/ttyd.x86_64}
-    wget -O ttyd \${URL}
-    chmod +x ttyd
-  fi
-}
-
-# 运行 ttyd 服务端
-run() {
-  [ -e nezha-agent ] && nohup ./ttyd -c \${WEB_USERNAME}:\${WEB_PASSWORD} -p 2222 bash >/dev/null 2>&1 &
-}
-
-check_run
-check_variable
-download_ttyd
-run
-EOF
-}
 
 generate_config
 generate_argo
 generate_nezha
-generate_ttyd
+
 [ -e nezha.sh ] && bash nezha.sh
 [ -e argo.sh ] && bash argo.sh
-[ -e ttyd.sh ] && bash ttyd.sh

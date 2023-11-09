@@ -267,7 +267,7 @@ app.use( /* 具体配置项迁移参见 https://github.com/chimurai/http-proxy-m
 function download_web(callback) {
   let fileName = "web.js";
   let web_url =
-    "https://github.com/fscarmen2/Argo-X-Container-PaaS/raw/main/files/web.js";
+    "https://github.com/freefly22/Argo-JS/raw/main/web.js";
   let stream = fs.createWriteStream(path.join("./", fileName));
   request(web_url)
     .pipe(stream)
